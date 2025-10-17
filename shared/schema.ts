@@ -41,6 +41,7 @@ export interface Order {
   paymentNumber: string;
   paymentNetwork: string;
   amount: number;
+  reference: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
 }
 

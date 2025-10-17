@@ -32,7 +32,14 @@ Budget Bundles is a web application for purchasing affordable data bundles for v
 └── package.json
 ```
 
-## Recent Changes (October 15, 2025)
+## Recent Changes (October 17, 2025)
+- ✅ **Paystack Duplicate Reference Fix**: Fixed critical payment amount mismatch causing transaction errors
+  - Synchronized frontend and backend amounts (both now apply 2% fee)
+  - Added better error handling and logging for Paystack responses
+  - Improved button state management to prevent double-click issues
+  - Added type="button" attribute to prevent accidental form submissions
+
+## Previous Changes (October 15, 2025)
 - ✅ **Mobile Hamburger Menu**: Added slide-in navigation menu for mobile screens
   - Hamburger menu button (three lines icon) appears on mobile devices
   - Sliding sidebar menu from the right with navigation links

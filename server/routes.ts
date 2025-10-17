@@ -76,8 +76,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: `customer${order.id}@triversa.com`, // Using order ID as customer email
-            amount: Math.round(packageDetails.price * 1.02 * 100),  // Adds 2%
+            email: `customer${order.id}@triversa.com`,
+            amount: Math.round(packageDetails.price * 1.02 * 100),
             reference: uniqueReference,
             callback_url: callbackUrl,
             metadata: {
@@ -92,8 +92,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       const paystackData = await paystackResponse.json();
+      
+      console.log("Paystack initialization response:", JSON.stringify(paystackData));
 
       if (!paystackData.status) {
+        console.error("Paystack initialization failed:", paystackData);
         return res.status(400).json({
           error: paystackData.message || "Payment initialization failed",
         });

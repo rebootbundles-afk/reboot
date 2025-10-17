@@ -146,7 +146,6 @@ export default function Payment() {
     setIsProcessing(true);
 
     try {
-      // Initialize payment on backend
       const res = await apiRequest('POST', '/api/payment/initialize', {
         serviceId,
         packageId,
@@ -155,14 +154,17 @@ export default function Payment() {
         paymentNetwork
       });
 
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Payment initialization failed');
+      }
+
       const response = await res.json();
 
-      // Open Paystack popup
       const handler = window.PaystackPop.setup({
         key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
         email: `customer${response.orderId}@triversa.com`,
-        amount: Math.round((selectedPackage?.price || 0) * 100), // Convert to pesewas
-        currency: 'GHS',
+        amount: Math.round((selectedPackage?.price || 0) * 1.02 * 100),
         ref: response.reference,
         onClose: () => {
           setIsProcessing(false);
@@ -173,7 +175,6 @@ export default function Payment() {
           });
         },
         callback: (paystackResponse) => {
-          // Verify payment - handle async operation separately
           apiRequest('GET', `/api/payment/verify/${paystackResponse.reference}`)
             .then(verifyRes => verifyRes.json())
             .then(verifyResponse => {
@@ -205,7 +206,7 @@ export default function Payment() {
       console.error('Payment error:', error);
       toast({
         title: "Payment Error",
-        description: "Could not initialize payment, please try again",
+        description: error instanceof Error ? error.message : "Could not initialize payment, please try again",
         variant: "destructive"
       });
       setIsProcessing(false);
@@ -305,6 +306,7 @@ export default function Payment() {
               onClick={handlePayment}
               disabled={isProcessing || !paystackLoaded}
               data-testid="button-buy"
+              type="button"
             >
               {isProcessing ? "Processing..." : !paystackLoaded ? "Loading..." : "Buy Data Bundle"}
             </Button>
